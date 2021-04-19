@@ -319,6 +319,49 @@ namespace Minio
         }
 
         /// <summary>
+        /// Returns current lifecycle stored on the server for this bucket
+        /// </summary>
+        /// <param name="bucketName">Bucket name.</param>
+        /// <param name="cancellationToken">Optional cancellation token to cancel the operation</param>
+        /// <returns>Task that returns the Bucket lifecycle as a json string</returns>
+        public async Task<string> GetLifecycleAsync(string bucketName, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            IRestResponse response = null;
+
+            var request = await this.CreateRequest(Method.GET, bucketName,
+                                 contentType: "application/json")
+                            .ConfigureAwait(false);
+            request.AddQueryParameter("lifecycle", "");
+            string lifecycleString = null;
+            response = await this.ExecuteTaskAsync(this.NoErrorHandlers, request, cancellationToken).ConfigureAwait(false);
+            var contentBytes = System.Text.Encoding.UTF8.GetBytes(response.Content);
+
+            using (var stream = new MemoryStream(contentBytes))
+            using (var streamReader = new StreamReader(stream))
+            {
+                lifecycleString = await streamReader.ReadToEndAsync().ConfigureAwait(false);
+            }
+            return lifecycleString;
+        }
+
+        /// <summary>
+        /// Sets the current bucket lifecycle
+        /// </summary>
+        /// <param name="bucketName">Bucket Name</param>
+        /// <param name="lifecycleJson">Lifecycle json as string </param>
+        /// <param name="cancellationToken">Optional cancellation token to cancel the operation</param>
+        /// <returns>Task to set a lifecycle</returns>
+        public async Task SetLifecycleAsync(string bucketName, string lifecycleJson, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var request = await this.CreateRequest(Method.PUT, bucketName,
+                                           contentType: "application/json")
+                                .ConfigureAwait(false);
+            request.AddQueryParameter("lifecycle", "");
+            request.AddJsonBody(lifecycleJson);
+            IRestResponse response = await this.ExecuteTaskAsync(this.NoErrorHandlers, request, cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Gets notification configuration for this bucket
         /// </summary>
         /// <param name="bucketName">Bucket name</param>

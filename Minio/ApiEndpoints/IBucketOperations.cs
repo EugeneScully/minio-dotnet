@@ -85,6 +85,23 @@ namespace Minio
         Task SetPolicyAsync(string bucketName, string policyJson, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
+        /// Get bucket lifecycle
+        /// </summary>
+        /// <param name="bucketName">Bucket name</param>
+        /// <param name="cancellationToken">Optional cancellation token to cancel the operation</param>
+        /// <returns>Returns Task with bucket lifecycle json as string </returns>
+        Task<string> GetLifecycleAsync(string bucketName, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Sets the current bucket lifecycle
+        /// </summary>
+        /// <param name="bucketName">Bucket Name</param>
+        /// <param name="lifecycleJson">Lifecycle json as string </param>
+        /// <param name="cancellationToken">Optional cancellation token to cancel the operation</param>
+        /// <returns>Task to set a lifecycle</returns>
+        Task SetLifecycleAsync(string bucketName, string lifecycleJson, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
         /// Gets the notification configuration set for this bucket
         /// </summary>
         /// <param name="bucketName">Bucket Name</param>
